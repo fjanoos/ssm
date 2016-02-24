@@ -1,0 +1,103 @@
+% @name manual.tex
+% @note analysis software manual
+% @author firdaus janoos
+% @date Friday, April 15, 2011 at 12:10
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass{book}
+%
+% To change the dissertation to a Master's Thesis, include a documentclass
+% option such as [masters], [ms], [ma], etc.  Also available are [osudraft]
+% and [twoside].  As a reminder, documentclass options are a
+% comma-separated list, e.g. \documentclass[ms,osudraft]{osudissert96}
+%
+
+\input{preamble}
+
+
+% BibTeX from the BiBTeX Documentation
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+%
+% It is better to break up the dissertation into multiple files (e.g.,
+% one file per chapter, as well as separate files for the abstract,
+% acknowledgements, and vita).  These files are brought into the
+% document using \include{} statements.  There will be times, however,
+% when you don't want to print the ENTIRE dissertation.  You can limit
+% what will actually be printed by using the \includeonly{} statment.
+% This contains a list of the files you want printed.  Any file NOT
+% listed will not be printed.  However, all page numbers, references,
+% etc., will be preserved as though all the files were actually
+% printed. For example, the line below would result only in chapters 1
+% and 3 being printed (if it were uncommented).
+%
+%\includeonly{ch1.intro,ch3.implem}
+
+%  In the new format, the titles of each chapter should appear in
+%  uppercase.  In the TOC, however, they should be in lowercase.
+%  The command below automates this behavior.  However, you'll have to be
+%  careful not to include \labels within your \chapter definitions or
+%  there will be problems.  If you don't want this to be automated, comment
+%  out the \typesetChapterTitle definition below and do your chapters in
+%  the form:
+%  \chapter[MY TITLE]{My Title}
+
+
+
+% using chapterbib
+\renewcommand\refname{REFERENCES}
+\renewcommand\bibname{REFERENCES}
+
+\graphicspath{{./figures/}}
+
+\begin{document}
+
+
+%------------------------------------------------------------------------------
+% Title Pages
+%------------------------------------------------------------------------------
+%\title{Exploring the Temporal Dimension of fMRI}
+\title{Spatio-Temporal State-Space Analysis for fMRI\\
+\textbf{User Manual}}
+\author{Firdaus Janoos} % insert your name
+
+
+\maketitle
+
+
+%------------------------------------------------------------------------------
+% Main Content
+%------------------------------------------------------------------------------
+
+\tableofcontents
+\listoffigures
+
+\chapter{Introduction}
+\input{intro.v1}
+
+\chapter{Preprocessing}
+\input{preproc.v1}
+
+\chapter{Feature Space Computation}
+\label{chap:feature-space}
+\input{feature-space.v1}
+
+\chapter{Model Specification and Estimation}
+\input{model-specify.v1}
+
+\chapter{Model Exploration}
+\label{chap:explore}
+\input{model-explore.v1}
+
+%\appendix
+
+%------------------------------------------------------------------------------
+%\part*{References}
+%------------------------------------------------------------------------------
+\bibliographystyle{apalike}
+\addcontentsline{toc}{part}{References}
+\bibliography{library}
+%;D:/docs/library
+
+\end{document}

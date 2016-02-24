@@ -1,0 +1,181 @@
+%feature-space.v1
+As seen in \Fig{fig:pipeline}, computing the low-dimensional
+feature-space representation of the data involves the following
+steps:
+
+\begin{enumerate}
+  \item Generate a re-sample of the fMRI session.
+  \item Compute the functional connectivity for the resample.
+  \item Compute the orthogonal basis for the resample.
+  \item Retain or discard basis vectors using bootstrap analysis of
+  stability\cite{Bellec2010}.
+  \item Project each fMRI volume (time-point) into the low
+  dimensional feature space obtained above.
+\end{enumerate}
+
+
+The algorithms that provide this functionality are extremely
+computation intensive though easily parallelized, and are therefore
+implemented in MATLAB$^\circledR$ with Star-P$^\circledR$. To run
+this module, it essential to have Star-P$^\circledR$ installed and
+configured with MATLAB. Also, it is recommended that a cluster or
+high-end high memory multi-processor computer be used. For an fMRI
+session with $\approx 500$ volumes at $3$mm resolution, a minimum of
+32GB RAM is essential.
+
+A example of feature-space computation and projection operation code
+fragment is:
+\begin{verbatim}
+    % load the preprocessed fMRI session
+    vi_original = spm_vol( epi_series_preprocessed_fnames );
+    % load a mask for the ROI
+    vi_mask = spm_vol( roi_mask_fname);
+    basis_filename = {};
+    num_boot_iter = 1000;
+    % BOOTSTRAP : iterate over multiple resamples
+    for boot_iter = 1 : num_boot_iter
+        % select a resample
+        if boot_iter == 1
+            % keep the first resample as the original sample
+            vi_resample = vi_original;
+        else
+            [vi_resample] = fsResample( vi_original,
+                                        ``block'', 10  );
+        end
+        % compute the connectivity matrix for the resample
+        fsComputeConnectivity(vi_resample, vi_mask, 4,
+                                0.25, connectivity_filename.bin);
+        % compute the orthogonal basis vectors for the resample
+        basis_filename{boot_iter} = [basis_filename_template,
+                num2str(boot_iter)];
+        fsOrthogonalize(connectivity_filename.bin,
+                                basis_filename{boot_iter});
+    end
+    % perform the bootstrap analysis of stability
+    [basis_set_idx, num_basis] =
+                                fsBASC(basis_filename, 0.8, 0.75);
+    % project original data on basis
+    [basis_coords]=  fsProjectBasis( vi_original, basis_set_idx
+                                        basis_filename{1});
+\end{verbatim}
+
+\section{Resampling the fMRI Session}
+Function Syntax:
+\begin{verbatim}
+    [vi_resample] = fsResample( vi_original, resamp_type,
+    option_1, option_2  );
+\end{verbatim}
+Arguments:
+\begin{itemize}
+  \item \verb"vi_original" - The array of \verb"spm_vol" structures of the original EPI time-series.
+  \item \verb"resamp_type" - Valid choices are \verb"``block''" which selects the block bootstrap method
+  described in \cite{Janoos2011} or   \verb"``wavelet''" that selects the wavelet based
+  time-series bootstrapping method described in \cite{Patel2006}.
+  \item \verb"option_1" - For \verb"resamp_type=``block''",
+  \verb"option_1" is the length of a block in TR units. Typically
+  \verb"option_1=10" has been found to be suitable for different
+  datasets. The reader is referred to \cite{Janoos2010g} for more
+  details on the tradeoffs involved. For
+  \verb"resamp_type=``wavelet''", \verb"option_1" is the size of
+  the coarsest scale in the wavelet decomposition tree, in TR units.
+  Wavelet coefficients over a support greater than this value are
+  not computed for permutation.
+  \item \verb"option_2" - Not defined for
+  \verb"resamp_type=``block''".
+  For \verb"resamp_type=``wavelet''", \verb"option_2" is the order
+  (number of vanishing moments) of the wavelet basis. A typical value is
+  between 2 and 5.
+\end{itemize}
+Returns:
+\begin{itemize}
+  \item \verb"vi_resample" - The resample of the session.
+\end{itemize}
+
+
+\section{Computing Functional Connectivity for a Resample}
+Function Syntax:
+\begin{verbatim}
+    fsComputeConnectivity( vi_resample, fwhm,
+                        hac_frac, output_filename)
+\end{verbatim}
+Arguments:
+\begin{itemize}
+  \item \verb"fwhm" - The FWHM (in mm) of the Gaussian filter during the
+  HAC step, typically set to 4.
+  \item \verb"hac_frac" - The number of HAC clusters as a
+  fraction of the number original voxels.
+  \item \verb"output_filename" - The name of the output file
+  in which to store the connectivity matrix. The matrix is
+  stored row-wise in binary format (single precision float).
+\end{itemize}
+ Notes: This function is implemented in \verb"C++" with a
+MATLAB hook.
+
+\section{Computing the Orthogonal Basis Vectors}
+Function Syntax:
+\begin{verbatim}
+    fsOrthogonalize(connectivity_filename_input,
+                                basis_filename);
+\end{verbatim}
+Arguments:
+\begin{itemize}
+  \item \verb"connectivity_filename_input" -
+    The file containing the connectivity matrix.
+  \item \verb"basis_filename" - The file name (prefix) of
+  the output files in which the basis vectors are stored (in zipped 4D NII
+  format). Example, \verb"/data/session/subject_basis_resample_4"
+  will result in the $N$ basis vectors   corresponding to the 4-th
+  resample of the session being stored in the file
+  \verb"/data/session/subject_basis_resample_4.nii.gz".
+\end{itemize}
+
+
+\section{Bootstrap Analysis of Stability}
+\label{sec:basc}
+ Function Syntax:
+\begin{verbatim}
+    [basis_set_idx, num_basis] =
+                        fsBASC(basis_filename_array, tau, p);
+\end{verbatim}
+Arguments:
+\begin{itemize}
+  \item \verb"basis_filename_array" -
+    A cell array of filenames of the 4D zipped NII (\verb".nii.gz")
+    each containing the basis vectors computed for a resample of the
+    session.
+  \item \verb"tau" - The threshold at which correlations between the
+  corresponding basis vectors across resamples are retained.
+  Typically set between 0.6 and 0.9.
+  \item \verb"p" - The probability value of suprathreshold correlations,
+  if when exceeded the corresponding basis vector is retained in the
+  final low-dimensional set.
+\end{itemize}
+Returns:
+\begin{itemize}
+  \item \verb"basis_set_idx" -
+   The indices of the basis vector retained.
+  \item \verb"num_basis" - The number of basis vectors retained
+\end{itemize}
+
+\section{Project Session on to Basis}
+Function Syntax:
+\begin{verbatim}
+    [fs_coords]=  fsProjectBasis( vi_original,
+                basis_set_idx, basis_filename);
+\end{verbatim}
+Arguments:
+\begin{itemize}
+    \item \verb"vi_original" - The array of \verb"spm_vol" structures of the original EPI time-series.
+ \item \verb"basis_set_idx" -
+   The indices of the basis vector retained.
+  \item \verb"basis_filename" -
+    The filename of the 4D zipped NII (\verb".nii.gz")
+    containing the basis vectors computed for a particular re-sample of the
+    session.
+\end{itemize}
+Returns:
+\begin{itemize}
+  \item \verb"fs_coords" - An number of scans times number of basis
+  array giving the coordinates of each fMRI time-frame in the low
+  dimensional feature space.
+\end{itemize}

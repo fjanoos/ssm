@@ -1,0 +1,329 @@
+% @desc Packages.tex
+% @note Packages and new latex commands defined and used throughout the text
+% @author firdaus janoos
+% @date 2:52 PM Tuesday, October 20, 2009
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{ifthen}
+\usepackage{makeidx}  % allows for indexgeneration
+\usepackage{url}
+
+\usepackage[usenames]{color}
+
+\usepackage{amsmath}   % From the American Mathematical Society
+\usepackage{amsfonts}% to get the \mathbb alphabet
+\usepackage{amssymb}
+
+
+%\usepackage{mathptmx} % don't use thsi crap package !!
+
+%This package provides some new list environments. Itemized and enumerated lists
+%can be typeset within paragraphs, as paragraphs and in a compact version.  Most
+%environments have optional arguments to format the labels.  Additionally, the L
+%A TEX environments itemize and enumerate can be extended to use a similar
+%optional argument.
+%The option pointedenum and the macro \pointedenum format the labels as in “1.”,
+%“1.1.”,  “1.1.1.”   and  “1.1.1.1.”   and  the  references  without  the
+%trailing point.  The option pointlessenum and the macro \pointlessenum do not
+%use the trailing point in the labels either.
+%The environment asparaenum is an enumerated environment in which the asparaenum
+%items are formatted as separate paragraphs.
+
+%\usepackage[pointedenum]{paralist}
+%\setdefaultenum{i}{i.i}{i.i.i}{i.i.i.i}
+
+%\setdefaultenum{i.}{i.}{i.}{i.}
+%\newenvironment{flushenum}{
+%\begin{enumerate}
+%  \setlength{\leftmargin}{0pt}
+%}
+%{\end{enumerate}
+%}
+
+\usepackage{enumerate}
+\renewcommand{\labelenumi}{\roman{enumi}}
+\renewcommand{\labelenumii}{\roman{enumi}.\roman{enumii}}
+\renewcommand{\labelenumiii}{\roman{enumi}.\roman{enumii}.\roman{enumiii}}
+\renewcommand{\labelenumiv}{\roman{enumi}.\roman{enumii}.\roman{enumiii}.\roman{enumiv}}
+
+
+
+\usepackage{verbatim}
+%The verbatim environment, \begin{verbatim} ... \end{verbatim},
+%permits us to insert large sections of preformated text in a LaTeX
+%file. It is very handy for inserting large chunks of code in a
+%document.
+%If the verbatim package is not quite what you need check the
+%moreverb package.It provides a large number of verbatim-like
+%environments.
+
+\usepackage{textcomp}
+\usepackage{dsfont}     %\mathds fonts
+\usepackage{psfrag}     % This package allows you to substitute LaTeX
+                        % commands for text in imported EPS graphic files.
+\usepackage{subfigure}  % This package makes it easy to put subfigures
+                        % in your figures. i.e. "figure 1a and 1b"
+\usepackage{url}        % Provides better support for handling and breaking
+                        % URLs. url.sty is already installed on most LaTeX
+\usepackage{stfloats}   % Gives LaTeX2e the ability to do double column
+                        % floats at the bottom of the page as well as the top.
+\usepackage{times}
+\usepackage{ifpdf}
+\usepackage{listings}
+
+%\usepackage{underscore}
+
+\usepackage{setspace}
+%% Double Spacing: Double spacing is made with the setspace package. Once the
+%setspace package is loaded, you just have to specify the type of spacing you
+%want at the start of your document. The command appears as such for double
+%spacing: % \doublespacing % Instead of doublespacing, this same command and
+%syntax can be used to create single spacing with the \singlespacing or to make
+%one half spacing using the command \onehalfspacing % You can switch from
+%doublespacing to singlespacing by simply changing the command to \singlespacing
+%before the spacing you want switched to singlespacing (this is very helpful
+%when switching from the main text to the notes and indices). % If a different
+%spacing is required, then the \setstretch{baselinestretch} command can be used
+%in the preamble to set the baselinestretch appropriately. The default spacing
+%with this style option is single spacing. The syntax for this command is
+%\setstretch{baselinestretch}
+
+
+%Smarter version of the original latex2e cross reference
+%commands. Generated strings are customizable, Babel options are recognized
+%(further info in the package documentation). \vref, \vpageref, \vref is similar
+%to \ref but adds an additional page reference, like on the facing page or on
+%page 27 whenever the corresponding \label is not on the same page. \vpageref is
+%a variation of \pageref with similar functionality. \vrefrange, \vpagerefrange,
+%The \v...range commands take two labels as arguments and produce strings which
+%depend on wether or not these labels fall onto a single page or on different
+%pages. \vref*, \vpageref*, \vpagerefrange*, Star * variants do not add any
+%space before the generated text for situations like:
+\usepackage{varioref}
+%\renewcommand{\ref}{\vref} %if using varioref
+
+
+
+% Referring to labels in other documents
+\usepackage{xr}
+\usepackage{xr-hyper}
+%Setting     \externaldocument{volume1} will load all the references from volume1 into your present document.
+%To have the facilities of xr working with hyperref, you need xr-hyper. For
+%simple hyper-cross-referencing (i.e., to a local PDF file you’ve just
+%compiled), write:
+%
+%    \usepackage{hyperref}
+%    \externaldocument[V1-]{volume1}
+%    ...
+%    ... the \nameref{V1-introduction})...
+%
+%and the name reference will appear as an active link to the “introduction”
+%chapter of volume1.pdf.
+% SEE: http://www.tex.ac.uk/cgi-bin/texfaq2html?label=extref
+
+%HyperTeX is a defacto standard for inclusion of hyperlink information in TeX
+%and LaTeX documents, which can then be used to generated PDF or DVI files with
+%embedded links. These links enable easy navigation inside documents as well as
+%between documents, just as in HTML, using standard PDF, Postscript and DVI
+%viewers. Various TeX, LaTeX and BibTeX style sheets and macro packages exist
+%which facilitate the construction of hyperlinked documents.
+\usepackage[plainpages=false,pdfpagelabels,pagebackref=false]{hyperref}
+
+%\usepackage{cite}
+\usepackage[numbers,square,sort]{natbib} %for author-date citations
+%\renewcommand{~\cite}{~\citep} %if using natbib
+%% Natbib options can be
+%% provided with \biboptions{...} command. Following options are
+%% valid:
+
+%%   round  -  round parentheses are used (default)
+%%   square -  square brackets are used   [option]
+%%   curly  -  curly braces are used      {option}
+%%   angle  -  angle brackets are used    <option>
+%%   semicolon  -  multiple citations separated by semi-colon
+%%   colon  - same as semicolon, an earlier confusion
+%%   comma  -  separated by comma
+%%   numbers-  selects numerical citations
+%%   super  -  numerical citations as superscripts
+%%   sort   -  sorts multiple citations according to order in ref. list
+%%   sort&compress   -  like sort, but also compresses numerical citations
+%%   compress - compresses without sorting
+%%
+%% \biboptions{comma,round}
+%\biboptiona{numbers,square,sort}
+
+%A separate bibliography for each ‘chapter’ of a document can be provided with
+%the package chapterbib (which comes with a bunch of other good bibliographic
+%things). The package allows you a different bibliography for each \included
+%file (i.e., despite the package’s name, the availability of bibliographies is
+%related to the component source files of the document rather than to the
+%chapters that logically structure the document).
+%\usepackage[sectionbib]{chapterbib}
+
+\usepackage{booktabs}
+%The package uses \toprule for the uppermost rule (or line), \midrule  for the rules
+%appearing in the middle of the table (such as under the header), and
+%\bottomrule for the lowermost rule. This ensures that the rule weight and
+%spacing are acceptable. In addition, \cmidrule  can be used for mid-rules that
+%span specified columns
+%http://tug.ctan.org/macros/latex/contrib/booktabs/booktabs.pdf
+
+\usepackage{tabularx}
+%This package provides a table environment called tabularx which is similar to
+%the tabular* environment, except that it has a new column specifier X  (in
+%uppercase). The column(s) specified with this specifier will be stretched to
+%make the table as wide as specified, greatly simplifying the creation of
+%tables.
+% makes the columns center justified
+%\renewcommand{\tabularxcolumn}[1]{>{\footnotesize}m{#1}}
+
+
+
+
+%However, two extension packages provide support  for  typesetting  tables
+%across  multiple  pages, namely longtable [3] and supertabular [1].
+\usepackage{longtable}
+
+%\usepackage{fullpage} % improves the page space layout of the article class
+\usepackage{layout}
+\usepackage{fancybox}
+\usepackage{fancyhdr}
+\usepackage{floatflt}
+\usepackage{parskip}
+\usepackage{wrapfig}
+%The LaTeX wrapfig package
+%The wrapfig package allows text to be wrapped around floating objects at the
+%side of the page. The package provides two environments, wrapfigure and
+%wraptable. These environments are not regular floats and may print out of
+%sequence, but accompanying captions are correctly numbered. The package has one
+%option available through the Options and Packages command on the Typeset menu
+%that controls whether to print information in the .log file.
+
+%% The lineno packages adds line numbers. Start line numbering with
+%% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
+%% for the whole article with \linenumbers after \end{frontmatter}.
+\usepackage{lineno}
+
+\usepackage{rotating}
+
+
+%Package dirtree allows to display directory tree, like in the windows ex-
+%plorator.
+\usepackage{dirtree}
+
+\newcommand{\fjnote}[1]{{\color{BrickRed}{#1}}}
+
+% see http://en.wikibooks.org/wiki/LaTeX/Algorithms_and_Pseudocode
+\usepackage{algorithmic}
+%\usepackage{algorithm}
+%\numberwithin{algorithm}{section}  % <--- chapter, section etc. depending on what is required
+\usepackage[lined,boxed,vlined,linesnumbered,algochapter]{algorithm2e}
+% add algorithms to the TOC
+
+\usepackage{amsthm} %theorem environment (http://en.wikibooks.org/wiki/LaTeX/Theorems)
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\numberwithin{equation}{section}
+
+%% The numcompress package shorten the last page in references.
+%% `nodots' option removes dots from firstnames in references.
+%% `nocompress' option prevent shortening of last page as
+%% by default it will shorten.
+\usepackage[nodots,nocompress]{numcompress}
+
+%% SIDE BAR
+\newenvironment{mysidebar}[1]
+{%begin  part  of  env.
+\begin{figure}[t!]
+\small
+\rule{\linewidth}{2pt}
+%\vspace{-16pt}
+\centerline{\textbf{#1}}
+\rule{\linewidth}{2pt}
+\\
+}
+{%end  part  of  env.
+\\
+\rule{\linewidth}{1pt}
+%\rule[.13in]{\linewidth}{2.5pt}
+\end{figure}
+}
+
+\newcommand{\fnsz}[1]{{\footnotesize #1}}
+\newcommand{\smsz}[1]{{\small #1}}
+
+
+%% to number subsubsections
+\setcounter{secnumdepth}{3}
+
+\newcommand{\cf}{\S}
+\newcommand{\eqn}[1]{eqn.~\ref{#1}}
+\newcommand{\Sec}[1]{Section~\ref{#1}}
+\newcommand{\Chap}[1]{Chapter~\ref{#1}}
+\newcommand{\Fig}[1]{Fig.~\ref{#1}}
+\newcommand{\App}[1]{Appendix~\ref{#1}}
+\newcommand{\Algo}[1]{Algorithm~\ref{#1}}
+
+\newcommand{\B}{\mathbb{B}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\D}{\mathrm{D}}
+\newcommand{\f}{\mathbf{f}}
+\newcommand{\F}{\mathrm{F}}
+\newcommand{\h}{{\mathbf{h}}}
+\newcommand{\I}{\mathrm{I}}
+\newcommand{\HH}{\mathrm{H}}
+\newcommand{\LL}{\mathcal{L}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\Oo}{\mathcal{O}}
+\newcommand{\Q}{\mathcal{Q}}
+\newcommand{\rr}{\mathbf{r}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\s}{{\mathbf{s}}}
+\newcommand{\Ss}{\delta{{\mathbf{Z}}}}
+\newcommand{\Ssmall}{\delta{{\mathbf{z}}}}
+\newcommand{\uu}{\mathbf{u}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\V}{\mathrm{V}_\epsilon}
+\newcommand{\VV}{\sigma}
+\newcommand{\W}{\mathbf{W}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\wbar}{\mathbf{\omega}}
+\newcommand{\x}{{x}}
+\newcommand{\X}{{x}}
+\newcommand{\Xn}{\X^{(n)}}
+\newcommand{\y}{{\mathbf{Y}}}
+\newcommand{\Y}{{\mathbf{y}}}
+\newcommand{\z}{{\mathbf{Z}}}
+\newcommand{\Z}{{\mathbf{z}}}
+
+%transpose operation
+\newcommand{\tr}{^\top}
+\newcommand{\TD}{\mathrm{FD}}
+\newcommand{\Tr}{\mathrm{Tr}}
+\newcommand{\diag}{\mathrm{diag}}
+\newcommand{\half}{\frac{1}{2}}
+
+\newcommand{\E}{\mathds{E}}
+\newcommand{\Var}{\mathds{V}\text{ar}}
+\newcommand{\Cov}{\mathds{C}\text{ov}}
+\newcommand{\Corr}{\mathds{C}\text{orr}}
+
+\newcommand{\Prr}{\mathrm{Pr}}
+\newcommand{\p}{p_\theta}
+\newcommand{\phat}{p_\widehat{\theta}}
+\newcommand{\pn}{p_{\theta^{(n)}}}
+\newcommand{\pp}[1]{p_{\theta^{(#1)}}}
+\newcommand{\qn}{q^{(n)}}
+\newcommand{\qq}{q^*}
+
+\newcommand{\LogPs}{\mathrm{LogPs}}
+\newcommand{\LogDiff}{\mathrm{LogDiff}}
+\newcommand{\Ph}{\mathrm{Ph}}
+\newcommand{\len}{\mathrm{Len}}
+\newcommand{\Ans}{\mathrm{Ans}}

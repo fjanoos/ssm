@@ -1,0 +1,63 @@
+The main functions of interest - when modifying for another study are:
+
+*) bwh_ms_main
+a) ssmSetupEnvironment
+b) ssmMSPreprocessing (it's now set up to do preprocessing for the MS study).
+c) ssmBuildStimulusMaps - set up for conditions of interest. these
+names should match the name of the contrast specified in HRF SPM.mat
+file. (see ssmMSPreprocessing for details).
+
+[params_opt, data, results]=  ssmEstimateFull(data, env, 2, block_length, tol);
+
+% params_opt - model parameters estimated from 'data' results -
+% detailed information about all internal computation steps. mainly
+% for debug and further analysis params structure (which is
+% params_opt)
+
+params =
+           omega: [40x14 double]           % state transition parameters
+               W: [40x14x14 double]        % "
+            mu_z: [40x14 double]           % 'Z'-layer parameters (mean)
+         Sigma_z: [40x40x14 double]        % " variance
+               H: [40x40x17 double]        % HRF (estimated one per FS)
+       Sigma_eps: [40x40 double]           % noise variance
+               u: [704x40 double]          % predicted stimulus
+      pred_error: [1x1 struct]             % detailed prediction error
+    invSigma_eps: [40x40 double]           % inverse of sigma_z and sigma_eps above
+      invSigma_z: [40x40x14 double]        % "
+               K: 14                      % optimal number of states
+            sseq: [1x1 struct]             % optimal state sequence
+               Z: [704x40 double]          % estimated values of Z
+
+% use data.u_idx to find the time points that are used for prediction
+>> params.pred_error
+         ch: [704x40 double]               % the error per stimulus channel per time point
+     ch_tot: [1x40 double]                 % the total error in each channel (regressor)
+        all: [704x1 double]                % cumulative error (over channels) per time point
+    all_tot: 5.2769                        % cumulative error summed over time
+
+% the optimal state sequence
+>> params_opt.sseq
+            x: [704x1 double]              % list of state labels (over time)
+    log_p_opt: -2.2480e+004                % the "quality" of this sequence (higher the better, 0 is best)
+
+% built up in bwh_ms_main and also in ssmEstimateFull. It is used/updated throughout the estimation
+>> data
+             D: 40                         % dimension of the fmri scan in feature-space
+             T: 704                        % nscans
+            TR: 2                   
+            ch: 40                         % number of stimuli
+             s: [704x40 double]            % stimulus vector (T x ch)
+             y: [704x40 double]            % fMRI data (T x D)
+           tol: 0.0500                     % stopping criterion. make it smaller to make results more exact.
+                                           %    but slower computation
+         basis: [1x1 struct]               % internal structure to do parameter tuning
+           set: [1x1 struct]               % " "
+             L: 17                         % length of HRF (in TRs)
+          mu_h: [17x1 double]              % prior on HRF (derived from ssmBuildHRF
+       Sigma_h: [17x17 double]             % " "
+    invSigma_h: [17x17 double]             % " "
+             K: 14                         % Number of states to be used in estimation
+      lambda_w: 0.1000                     % another hyper-parameter that balances between
+                                           % effect of stimulus and previous state on transition probabilities
+         u_idx: [112x1 double]             % indices (i.e. time points) to be used for prediction.

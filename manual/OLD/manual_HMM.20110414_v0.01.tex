@@ -1,0 +1,647 @@
+\documentclass[12pt,twoside]{article}
+\usepackage{setspace,epsfig,multicol,fancyhdr,amssymb,amsmath,amsfonts,lastpage,array,stmaryrd,color,graphics,multicol,wrapfig,graphicx,hhline,lineno,textcase,pifont,textcomp,ragged2e,url,nextpage}
+\usepackage[normalem]{ulem}
+\usepackage[utf8]{inputenc}
+
+%\psdraft
+
+%%%% for ARIAL font (helvetica)
+% \renewcommand{\familydefault}{\sfdefault}
+%\renewcommand{\rmdefault}{phv} % Arial
+%\renewcommand{\sfdefault}{phv} % Arial
+
+% characters utf8 : ••••••••••••••••••••••••••••• • 
+	
+\setstretch{1}
+\textwidth 160mm
+\topmargin -18mm
+\textheight 250mm
+%\textheight 260mm
+\headheight 14pt
+\oddsidemargin 5mm
+\evensidemargin 5mm
+\marginparwidth 25mm
+\marginparsep 3mm
+\marginparpush 0in
+%\footskip 0mm
+ 
+\pagenumbering{arabic}
+
+%%%% for bibliography
+%\usepackage{natbib}		% see petek.html, #BibTeX
+\usepackage[super,comma,sort&compress]{natbib}
+\renewcommand{\cite}[1]{{\color{blue}\citep{#1}}}
+%\newcommand{\CITE}[1]{{\color{citeblue}\citep{#1}}}
+
+%%%% in order to avoid square brackets in citation list reference 
+\makeatletter
+\def\@cite#1#2{({#1\if@tempswa , #2\fi})}
+\def\@biblabel#1{#1.}
+\makeatother
+
+\setstretch{1}
+
+\renewcommand{\thefootnote}{\color{red}{\fnsymbol{footnote}}}
+\renewcommand{\headrulewidth}{.4pt}
+
+%%%% for titles
+\newcounter{myNum}
+\setcounter{myNum}{0}
+%\newcommand{\myTitle}{
+%  \addtocounter{myNum}{1}
+%  \noindent\raisebox{0mm}[8mm][6mm]{\colorbox{lightgray}{\color{black}{\parbox[l][4mm][c]{.985\linewidth}{\rule{2mm}{0mm}{\normalsize\bf\textsf{\makebox[5.5mm][l]{\arabic{myNum}}\myStr}}}}}}}
+%\newcommand{\myStr}{bogus}
+%
+%\newcommand{\myPar}[1]{{\makebox[0mm][r]{\bfsf{#1}}\rule{7mm}{0mm}}}
+%\newcommand{\myPar}[1]{\makebox[7mm][l]{#1}}
+%\makeatletter
+%    \renewcommand{\paragraph}{\@startsection{paragraph}{2}{0mm}{-\baselineskip}{0\baselineskip}{\itshape\textbf}}
+%\makeatother
+%\alpha{paragraph}}
+%\renewcommand\thesubsubsection{\arabic{subsubsection}}
+%\renewcommand\thesection{\Alph{section}}
+
+\newcommand{\myParagraph}[1]{
+  \addtocounter{paragraph}{1}
+  \paragraph{\textbf{\Alph{section}.\arabic{subsection}.\arabic{subsubsection}.\arabic{paragraph}} {#1}}}
+
+%%%% color definitions
+\input colordvi
+         \def\Red#1{\Color{0 0.70 0.70 0.2}{#1}}
+         \def\Green#1{\Color{0.70 0 0.5 0.2}{#1}}
+         \def\Blue#1{\Color{0.70 0 0 0.2}{#1}}
+
+%	\newcommand\marginlabel[1]{\mbox{}\marginpar{\raggedright\hspace{0pt}\emph{\small#1}}}
+%	\newcommand\mytitleNp[1]{\newpage\begin{spacing}{1}\noindent{\textbf{\textsf{\Large{#1}}}}\end{spacing}\noindent\hrulefill\addcontentsline{toc}{section}{#1}\vspace{5mm}}
+%	\newcommand\mytitleNpNoToc[1]{\newpage\begin{spacing}{1}\noindent{\textbf{\textsf{\Large{#1}}}}\end{spacing}\noindent\hrulefill\vspace{5mm}}
+%	\newcommand\mytitleSp[1]{\vspace{10mm}\begin{spacing}{1}\noindent{\textbf{\textsf{\Large{#1}}}}\end{spacing}\noindent\hrulefill\addcontentsline{toc}{section}{#1}\vspace{5mm}}
+%	\newcommand\mysubsection[1]{\subsection*{#1}\addcontentsline{toc}{subsection}{#1}}
+%	%\newcommand\mysubsubsection[1]{\subsubsection*{#1}\addcontentsline{toc}{subsubsection}{#1}}
+%	%\newcommand\myparagraph[1]{\paragraph*{#1}\addcontentsline{toc}{paragraph}{#1}}
+%	%\newcommand\myparagraph[1]{\paragraph*{\textbf{\textsf{#1}}}\addcontentsline{toc}{subsection}{#1}}
+%	%\newcommand\ttt[1]{\textup{\ttfamily\normalsize #1}}
+\newcommand\ttt[1]{{\color{studyblue}\textup{\ttfamily\normalsize #1}}}
+%\newcommand{\CITE}[1]{{\color{darkred}\citep{#1}}}
+
+
+%%%% --- colors ---
+% 1	.5	.25	.125	.0625
+% 255	127	63	31	15
+
+\definecolor{black}		{rgb}{0,0,0}
+\definecolor{blue}		{rgb}{0,.2,1}
+\definecolor{citeblue}		{rgb}{0,.0625,.5}
+\definecolor{darkblue}		{rgb}{0,.0625,.25}
+\definecolor{darkgreen}		{rgb}{0,.4,0}
+\definecolor{darkpurple}        {rgb}{.5,0,.5}
+\definecolor{darkred}		{rgb}{.5,0,0}
+\definecolor{gold}		{rgb}{.9,.9,0}
+\definecolor{grayblue}          {rgb}{.4,.5,.6}
+\definecolor{grayred}		{rgb}{1,.8,.8}
+\definecolor{graygreen}		{rgb}{.8,1,.8}
+\definecolor{grayskyblue}	{rgb}{.8,.9,1}
+\definecolor{gray}		{rgb}{.8,.8,.8}
+\definecolor{green}		{rgb}{0,1,0}
+\definecolor{headerblue}	{rgb}{.125,.5,.75}
+\definecolor{lightgray}		{rgb}{.9,.9,.9}
+\definecolor{mediumgreen}	{rgb}{0,.7,0}
+\definecolor{orange}		{rgb}{.9,.5,0}
+\definecolor{purple}		{rgb}{.6,0,.5}
+\definecolor{red}		{rgb}{1,0,0}
+\definecolor{studyblue}		{rgb}{.2,.1,.7}
+\definecolor{turquoise}         {rgb}{0,.6,.6}
+\definecolor{whiteletter}	{rgb}{1,1,1}
+\definecolor{white}		{rgb}{1,1,1}
+
+% matlab 'jet' colors
+% cm = ( flipud(jet(8)) + .5)
+% CM = ( cm .* ( cm <= 1)) + ( cm > 1) ;	==> only for approximation !
+
+\definecolor{t_brown}		{rgb} { 0.7, 0.4, 0.3 }
+\definecolor{t_lightred}	{rgb} { 1.0, 0.9, 0.9 }
+\definecolor{t_red}		{rgb} { 1.0, 0.3, 0.1 }
+\definecolor{t_orange}		{rgb} { 1.0, 0.7, 0.2 }
+\definecolor{t_yellow}		{rgb} { 1.0, 1.0, 0.3 }
+\definecolor{t_lightgreen}	{rgb} { 0.8, 1.0, 0.8 }
+\definecolor{t_green}		{rgb} { 0.4, 1.0, 0.5 }
+\definecolor{t_turqu}		{rgb} { 0.5, 1.0, 1.0 }
+\definecolor{t_lightblue}	{rgb} { 0.9, 0.9, 1.0 }
+\definecolor{t_blue}		{rgb} { 0.2, 0.8, 1.0 }
+\definecolor{t_dblue}		{rgb} { 0.3, 0.5, 1.0 }
+
+\newcommand{\myBlue}{\noindent{\color{studyblue}{\large\bf\textsf{\myStr\ }}}}
+\newcommand{\myblue}{\noindent{\color{studyblue}{\myStr}}}
+\newcommand{\myRed}{\noindent{\color{darkred}{\bf\myStr}}}
+\newcommand{\myred}{\noindent{\color{darkred}{\myStr}}}
+
+\newcommand{\HMM}{{\color{darkred}\textbf{\textsf{HMM\ }}}}
+
+\begin{document} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\enlargethispage{1cm}
+%\thispagestyle{empty}
+\pagestyle{empty}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+%\noindent\hspace{-10mm}\makebox[0mm][l]{\raisebox{-245mm}[0mm][0mm]{\colorbox{gray}{\rule{183mm}{0mm}\rule{0mm}{246mm}}}}
+\noindent\hspace{-10mm}\makebox[0mm][l]{\raisebox{-238mm}[0mm][0mm]{\colorbox{graygreen}{\rule{183mm}{0mm}\rule{0mm}{246mm}}}}
+%\vspace*{5mm}
+
+\begin{spacing}{2}
+\noindent\scalebox{2.3}{\parbox{70mm}{\textbf{\textsf{\center\Huge{{\color{studyblue}\textbf{User Manual}}\newline \rule{0mm}{3ex}\HMM \rule{0mm}{3ex}Accelerated\newline 3D-EPI BOLD\newline fMRI sequence\newline using GRAPPA\newline and UNFOLD}}}}}
+\end{spacing}
+
+\vspace{22mm}
+
+\newcommand{\myVersion}{v0.01}
+\begin{spacing}{1.5}
+  {\large\noindent \today\\  {\color{studyblue}\textbf{User Manual (\myVersion) -- to use with GE 3T MRI scanners}}\\ Onur Afacan, Ph.D.\,cand., and István Ákos Mórocz\,, M.D., Ph.D.}
+\end{spacing}
+
+%\vspace{-30mm}
+
+%%%% that's actually for next page #2
+\textheight 230mm
+
+%\cleartoevenpage\thispagestyle{empty}\rule{0mm}{0mm}
+%\cleartooddpage\thispagestyle{empty}\rule{0mm}{0mm}
+
+\cleartooddpage\pagestyle{empty}\rule{0mm}{0mm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%% header and footer for the coming pages
+\pagestyle{fancy}
+\renewcommand\headrulewidth{.5pt}
+\renewcommand\footrulewidth{0pt}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[LO]{\small\HMM -- \emph{manual \myVersion}}
+\fancyhead[RE]{\small\emph{manual \myVersion} -- \HMM}
+\fancyhead[RO,LE]{\textsf{\small{\textbf{\color{studyblue}\thepage/\pageref{LastPage}}}}}
+
+\tableofcontents
+
+\cleartooddpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\enlargethispage{13mm}
+
+\vspace*{-6mm}
+
+\addcontentsline{toc}{section}{Abstract}
+
+\section*{\scalebox{2}{\Huge{{\color{studyblue}Manual\,:} \HMM}}}
+
+\vspace{4mm}
+
+\begin{spacing}{1.25}
+
+{\textsf{Abstract\,:}}\footnote{Abstract adapted from manuscript,
+  \emph{in print} NeuroImage 2011} Understanding the highly complex,
+spatially distributed and temporally organized phenomena entailed by
+mental processes using functional MRI is an important research problem
+in cognitive and clinical neuroscience. Conventional analysis methods
+focus on the spatial dimension of the data discarding the information
+about brain function contained in the temporal dimension. This paper
+presents a fully spatio–temporal multivariate analysis method using a
+state–space model (SSM) for brain function that yields not only
+spatial maps of activity but also its temporal structure along with
+spatially varying estimates of the hemodynamic response. Efficient
+algorithms for estimating the parameters along with quantitative
+validations are given. A novel lowdimensional feature–space for
+representing the data, based on a formal definition of functional
+similarity, is derived. Quantitative validation of the model and the
+estimation algorithms is provided with a simulation study. Using a
+real fMRI study for mental arithmetic, the ability of this
+neurophysiologically inspired model to represent the spatio–temporal
+information corresponding to mental processes is demonstrated.
+Moreover, by comparing the models across multiple subjects, natural
+patterns in mental processes organized according to different mental
+abilities are revealed.
+
+\end{spacing}
+
+\vfill
+
+\noindent\epsfig{figure=/home/pisti/munka/papers/afacan_onur/3D-EPI/figures/manuscript_fig4.eps,width=90mm}\hfill\parbox[b]{30mm}{
+  \small\textsf{\textbf{Fig\,1.} Images from a heal\-thy volunteer
+    acquired using a) standard 2D EPI (TR=3\,s), b) multishot 3D-EPI
+    (TR=3\,s) and {\color{studyblue}c) accelerated multi- shot \HMM
+      (TR=1.02\,s)}. Top row\,: axial images, middle row\,: coro\-nal
+    images, bottom row\,: sagittal
+    images.\\ \rule{0mm}{10mm}}}\rule{10mm}{0mm}
+
+\vfill
+
+
+\newpage
+
+\noindent\epsfig{figure=/home/pisti/munka/papers/afacan_onur/3D-EPI/figures/new3fir.eps,width=75mm}\epsfig{figure=/home/pisti/munka/papers/afacan_onur/3D-EPI/figures/new1fir.eps,width=75mm}
+
+\noindent\parbox[b]{160mm}{\small\textsf{\textbf{Fig\,2.} SPM results
+    showing the FIR analysis (Auditory Regressor) for the
+    event-related multiplication task using: (Left) multi-shot 3D EPI
+    (TR=3.0\,s) and (Right) {\color{studyblue}accelerated \HMM
+      (TR=1.02\,s)}. For each sequence, FIR bins corresponding to
+    areas related to auditory input, number recognition and button
+    press are plotted along time.}}
+
+\begin{spacing}{1}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\fancyhead[RO]{data acquisition -- \textsf{\small{\textbf{\color{studyblue}\thepage/\pageref{LastPage}}}}}
+\fancyhead[LE]{\textsf{\small{\textbf{\color{studyblue}\thepage/\pageref{LastPage}}}} -- data acquisition}
+
+\section{Instructions for running the \HMM sequence}
+
+
+\end{spacing}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\cleartooddpage\rule{0mm}{0mm}
+\fancyhead[RO]{\textsf{\small{\textbf{\color{studyblue}\thepage/\pageref{LastPage}}}}}
+\fancyhead[LE]{\textsf{\small{\textbf{\color{studyblue}\thepage/\pageref{LastPage}}}}}
+\cleartooddpage
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\fancyhead[RO]{data acquisition -- \textsf{\small{\textbf{\color{studyblue}\thepage/\pageref{LastPage}}}}}
+\fancyhead[LE]{\textsf{\small{\textbf{\color{studyblue}\thepage/\pageref{LastPage}}}} -- data acquisition}
+
+\section{Instructions for running the \EPI sequence}
+
+\begin{enumerate}
+  
+\item Start by selecting a new patient and then enter patient details
+  as you would in a standard MRI exam. Make sure that \ttt{Research
+    Mode} is selected.\\
+  
+  001 \epsfig{figure=../figures/3DEPI.001.eps,width=50mm}\\
+
+ 
+\item From the \ttt{Patient Protocols} window select \ttt{Other} and
+  then select \ttt{350-NUMBRA Human v0}.  This protocol number varies
+  between scanners.\\
+
+  002 \epsfig{figure=../figures/3DEPI.002.eps,width=68.5mm}
+   
+
+\newpage
+   
+\item From the list of \ttt{Series} please select the following
+  sequences (use the \ttt{Ctrl}-key for adding lines) and press
+  \ttt{Accept}:
+  
+  \begin{itemize}
+
+  \item \ttt{1-3p Localizer} (on first line)
+    
+  \item \ttt{15-prescan 3D EPI}
+    
+  \item \ttt{16-full 3D EPI}
+    
+  \item \ttt{17 accelerated \EPI}
+    
+  \end{itemize}
+
+\hfill\raisebox{-10mm}[0mm][20mm]{003
+  \epsfig{figure=../figures/3DEPI.003.eps,width=42.2mm}}
+
+\item After the sequences are loaded, select first the \ttt{3p
+  Localizer} sequence from the lower left \ttt{Rx Manager} menu and
+  press \ttt{View Edit}.\\
+  
+  004 \epsfig{figure=../figures/3DEPI.004.eps,width=25.6mm}
+  005 \epsfig{figure=../figures/3DEPI.005.eps,width=102.4mm}\\
+  
+
+\item Press \ttt{Save Series}, \ttt{Download} and \ttt{Scan} in order
+  to start the 3p-Localizer.\\
+
+  006 \epsfig{figure=../figures/3DEPI.006.eps,width=102.4mm}
+   
+
+\newpage
+
+\item After the 3p-Localizer is scanned, chose \ttt{prescan-3D EPI}
+  from the \ttt{Rx Manager}, press \ttt{View Edit}, and open the
+  \ttt{Graphic Rx} window (see fig.\,005).  Click at the center of the
+  upper left image.\\
+
+  007 \epsfig{figure=../figures/3DEPI.007.eps,width=25.6mm}
+  008 \epsfig{figure=../figures/3DEPI.008.eps,width=102.4mm}\\
+
+  
+\item Close \ttt{Graphic Rx} window and click on \ttt{X}.\\
+
+  009 \epsfig{figure=../figures/3DEPI.009.eps,width=102.4mm}\\
+
+   
+\newpage
+   
+\enlargethispage{10mm}
+   
+\item Press \ttt{Save Series}, \ttt{Download} and \ttt{Scan} in order to
+  start the prescan-3D EPI.\\
+
+  010 \epsfig{figure=../figures/3DEPI.010.eps,width=102.4mm}\\
+
+%  011 \epsfig{figure=../figures/3DEPI.011.eps,width=102.4mm}
+   
+
+\item From the Rx menu, select \ttt{\uline{full-3D EPI}}.
+  Alternatively, if you want to scan at a $3 \times$ accelerated pace,
+  select \ttt{\uline{accelerated-\EPI}} instead of the full-3D EPI.
+  All further instructions in this manual are identical for both
+  sequence versions.\\
+
+  012 \epsfig{figure=../figures/3DEPI.012.eps,width=25.6mm}
+  013 \epsfig{figure=../figures/3DEPI.013.eps,width=25.6mm}\\
+
+
+\item Press \ttt{View Edit}, open Open \ttt{Graphic Rx} menu, and
+  click at the center of the upper left image.\\
+
+  \hspace{-39mm}
+  \makebox[0mm][l]{
+  \epsfig{figure=../figures/3DEPI.014.eps,width=102.4mm}
+  \epsfig{figure=../figures/3DEPI.015.eps,width=102.4mm}}
+
+  014 015 
+
+
+\newpage
+   
+\item Type 50 under \ttt{\# of Slices}.  Then move the 50-slice-slab
+  into the desired brain region (in all three planes) just like you
+  would do it for a 2D-EPI sequence.\\
+
+  \hspace{-39mm}
+  \makebox[0mm][l]{
+  \epsfig{figure=../figures/3DEPI.016.eps,width=102.4mm}
+  \epsfig{figure=../figures/3DEPI.017.eps,width=102.4mm}}
+
+  016 017\\
+
+
+\item Close \ttt{Graphic Rx} (click in \ttt{X}) and open the
+  \ttt{Multi-Phase} window from the \ttt{Additional Para\-meters}
+  screen.\\
+
+  018 \epsfig{figure=../figures/3DEPI.018.eps,width=102.4mm}
+
+
+\newpage
+
+\item Select the number of volumes or \ttt{Phases per Location} and
+  then press enter. Check scan length under \ttt{Total time} \,!  For
+  example 18 volumes (phases) result in 54\,s scan time in the case of
+  the \emph{full}-3D-EPI mode while the \emph{accelerated}-\EPI will
+  show 19\,s (approx.).  Then hit the \ttt{Accept} button.\\
+
+  019 \epsfig{figure=../figures/3DEPI.019.eps,width=67mm}
+  020 \epsfig{figure=../figures/3DEPI.020.eps,width=67mm}
+
+  031 \epsfig{figure=../figures/3DEPI.031.eps,width=67mm} (accelerated)\\
+
+   
+\item If the desired number of volumes is above 500, you need to use
+  the \ttt{NEX} option to scan. For example if you want to scan 1000
+  images select 500 using the Multi-Phase screen, close the
+  Multi-Phase screen and then click on \ttt{NEX} option on the right
+  side of the screen (see fig.\,018) and then set it to 2. This way
+  the sequence will produce 1000 images.
+
+
+\item Click \ttt{Save Series} and \ttt{Download}, but this time
+  \uline{instead of Scan} please hit \ttt{Manual Prescan}.\\
+
+  021 \epsfig{figure=../figures/3DEPI.021.eps,width=102.4mm} (full)
+
+  032 \epsfig{figure=../figures/3DEPI.032.eps,width=102.4mm} (accelerated)
+
+
+\newpage
+
+\item After the \ttt{Manual Prescan} window pops up, wait a few
+  clicks, then hit \ttt{Done}.\\
+
+  022 \epsfig{figure=../figures/3DEPI.022.eps,width=81mm}\\
+   
+
+\item Now you need to start for each scan an \textbf{RDS client} that
+  will read and store the raw data.  To do that you
+  need to open a UNIX command window.  For that you will open a
+  command window by \ttt{right click} on the blue screen background
+  and select \ttt{Service Tools---Command Window} from the list of
+  options.\\
+
+  023 \epsfig{figure=../figures/3DEPI.023.eps,width=51.3mm}\\
+   
+
+\item Type in the command window\,: \ttt{cd /usr/g/research/onur/rds}
+  and hit \ttt{enter}.\\
+
+  024 \epsfig{figure=../figures/3DEPI.024.eps,width=51.3mm}
+  
+
+\newpage
+
+\item Then type\,: \ttt{readdata exam\# series\# acquisition\#}
+
+  For example, if your exam number is 9584, and you are in the 3rd
+  series, and prepare the 1st acquisition (1st scan), type\,:
+  \ttt{readdata 9584 3 1}, or \ttt{readdata 9584 3 2} (2nd scan) and
+  so on...\\
+
+% 7061
+
+  025 \epsfig{figure=../figures/3DEPI.025.eps,width=51.3mm}\\
+   
+
+\item Then in the sequence screen hit \ttt{Scan}.\\
+
+  026 \epsfig{figure=../figures/3DEPI.026.eps,width=102.4mm}\\
+   
+
+\item After the scan is finished your RAW data file will be stored, as
+  indicated, in the directory \ttt{/usr/g/research/mrraw2/RAW/} :\\
+
+  027 \epsfig{figure=../figures/3DEPI.027.eps,width=51.3mm}
+   
+
+\newpage
+
+\item If you so desire, you can view a quick\,\&\,dirty raw data
+  reconstruction by typing \ttt{qad filename} within directory
+  \ttt{/usr/g/research/mrraw2/RAW/} (for reasons unclear as of now
+  does the matlab figure close by itself after a few seconds) :\\
+
+  \noindent
+  \makebox[0mm][c]{\raisebox{40mm}{028 029 30}}
+  \hspace{-15mm}
+  \epsfig{figure=../figures/3DEPI.028.eps,width=51.3mm}
+  \epsfig{figure=../figures/3DEPI.029.eps,width=57.9mm}
+  \epsfig{figure=../figures/3DEPI.030.eps,width=57.9mm}\\
+
+
+\item Your RAW data file(s) will be transferred automatically every
+  midnight.  You may also get your data earlier.  In this case, the raw data transfer
+  \emph{manually} by typing, for each file
+  separately, \ttt{/usr/g/research/pisti/transfer\_RAW.sh} followed by
+  the corresponding filename\,:
+
+  033 \epsfig{figure=../figures/3DEPI.033.eps,width=51.3mm}
+  034 \epsfig{figure=../figures/3DEPI.034.eps,width=51.3mm}
+
+
+\end{enumerate}
+
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\fancyhead[RO]{data reconstruction -- \textsf{\small{\textbf{\color{studyblue}\thepage/\pageref{LastPage}}}}}
+\fancyhead[LE]{\textsf{\small{\textbf{\color{studyblue}\thepage/\pageref{LastPage}}}} -- data reconstruction}
+
+\section{Instructions for \EPI reconstruction procedure}
+
+\vspace{5mm}
+
+\begin{enumerate}
+  
+\item First you need to connect to a Linux workstation that belongs to
+  the fMRI service (see
+  \ttt{http://cafe.spl.harvard.edu/pages/Resources}).
+
+
+\item Then start Matlab by typing\,:
+
+  \ttt{matlab\_790 -nodesktop}
+
+\item The necessary m-files are stored in\,:
+
+  \ttt{/misc/kodaly/r/home/afacan/programs/matlab/recon}
+
+\item For \emph{unaccelerated} 3D EPI data you need use the function
+  \ttt{reconx.m}, for \emph{accelerated} \EPI UNFOLD GRAPPA data you
+  need to use \ttt{reconxun.m}
+
+\item Both \ttt{reconx} and \ttt{reconxun} require an input structure
+  \ttt{myV}\,.
+
+\item Here are listed the essential variables for this structure:
+
+  \begin{itemize}
+    
+  \item \ttt{myV.fname} : name of the raw file
+
+  \item \ttt{myV.n} : number of images (the largest useful number
+    corresponds to the number of scans that was set in the multi-phase
+    screen {\color{red}$\times$ NEX} (see fig.\,18)).
+
+  \item \ttt{myV.pathin} : location of the raw file.  In case this
+    variable is \uline{\emph{not}} set the program will look under
+    \ttt{/data/kodaly/numbra/RAW/}
+
+  \item \ttt{myV.pathout} : directory to which you want the output
+    NIFTI (\ttt{nii}) files to be transferred to.
+
+  \item \ttt{myV.mode} : A flag to select whether you want to keep the
+    intermediate files. If mode is selected as \ttt{1}, you will only
+    get \ttt{nii} files.
+
+  \item \ttt{myV.output} : The name of the output files. E.\,g., if
+    you select \ttt{e1234s12a1}, the files will be named
+    e1234s12a1i\_001.nii \emph{etc}.  If myV.output is
+    \uline{\emph{not}} set the program will pull the name from
+    myV.fname.
+
+  \end{itemize}
+  
+\item Once \ttt{myV} is set you need to run reconx.m in matlab as:
+  \ttt{reconx(myV)}, and the resulting output data will be placed into
+  myV.pathout.
+
+\vfill
+
+\hfill \emph{continue next page} $\Longrightarrow$
+
+\vfill
+
+
+
+
+\newpage
+
+\item For example, if you do the following in Matlab\ldots
+
+  \begin{itemize}
+
+  \item \ttt{myV.n = 151;}
+
+  \item \ttt{myV.fname = {'e9876s54a3.BW22130T.20100504.17:30:05.690.raw'};}
+
+  \item \ttt{myV.pathout = '/misc/haendel/b/numbra/finalrecon/deneme/';}
+
+  \item \ttt{myV.pathin = '/misc/haendel/b/numbra/finalrecon';}
+
+  \item \ttt{myV.mode = 1;}
+
+  \item \ttt{myV.output = 'e1234s12a1';}
+
+  \item \ttt{reconx(myV);}
+
+  \end{itemize}
+
+\item \ldots the reconstruction procedure will process
+  \ttt{e9876s54a3.BW22130T.20100504.17: 30:05.690.raw}\ in the
+  directory \ttt{/misc/haendel/b/numbra/finalrecon/}. And the output
+  files will be in \ttt{/misc/haendel/b/numbra/finalrecon/deneme/} and
+  will have names such as\,: \ttt{e1234s12a1\_i???.nii} .
+
+\end{enumerate}
+
+\end{spacing}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\cleartooddpage\rule{0mm}{0mm}
+\fancyhead[RO]{\textsf{\small{\textbf{\color{studyblue}\thepage/\pageref{LastPage}}}}}
+\fancyhead[LE]{\textsf{\small{\textbf{\color{studyblue}\thepage/\pageref{LastPage}}}}}
+\cleartooddpage
+
+\end{document}

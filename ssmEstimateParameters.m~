@@ -1,0 +1,313 @@
+function [ params_opt, rel_change, rel_err] = ssmEstimateParameters( data, env, params_true)
+%_________________________
+% ssmEstimateParameters.m
+%
+% only parameter estimation - does not estimate hyper-parameters
+% data : structure containing all input data with fields
+%       T -- number of time points
+%       D - dimension
+%       Y -- fmri data in feature space coordinates
+%       s -- stimulus vector (including missing stimuli)
+%       u_idx -- index of missing stimuli
+%       K - number of states  
+%       lambda_w - hyper-parameter
+%       TR -
+%       mu_h, Sigma_h, L --
+% params_true : (optional) for cross checking in simulation study
+    
+% $Id: ssmEstimateParameters.m v0.01 2012-05-30 19:01:31 fj $
+% $Id: ssmEstimateParameters.m v0.02 2012-06-30 13:16:34 fj $ added tictoc variable
+    
+%%%% propaganda
+myLogo						= cafe_logo( mfilename, 'messg', [ 'subject : ' data.subject_id ' * ' datestr( now, 31)]) ;
+
+params.logo					= myLogo.tmp ;
+
+data.tictoc.( mfilename).begin			= datestr( now, 31) ;
+
+D						= data.D ;
+L						= data.L ;
+T						= data.T ;
+Y						= data.y ;
+s						= data.s ;
+TR						= data.TR ;
+mu_h						= data.mu_h ;
+Sigma_h						= data.Sigma_h ;
+u_idx						= data.u_idx ;
+ch						= data.ch ;
+K						= data.K ; 
+lambda_w					= data.lambda_w ;
+tol						= data.tol ;
+
+% --initialize model parameters--
+
+% state transition parameters
+params.omega					= zeros([ ch,K]) ;
+params.W					= sqrt( lambda_w) * randn([ ch,K,K]) ; % indexed as ch, i, j
+
+% z_t mean and variance    
+params.mu_z					= randn( [D,K] )  ;
+params.Sigma_z					= repmat( 0.01 * eye(D), [1,1,K]) ;
+% hemodyanmic response
+params.H					= zeros([ D,D,L]) ;
+for l = 1 : L 
+    params.H(:,:,l)				= eye(D) * mu_h(l) ;
+end
+% measurement noise
+params.Sigma_eps				= 0.01 * eye(D) ; %initialize to some value - square-root version?
+
+if exist( 'params_true', 'var')
+    params					= params_true ;
+end
+
+% Hidden observations and prediction error
+params.u					= s + 0.05 * s .* randn(size(s)) ;
+params.pred_error				= [] ;		% prediction error structure
+params.pred_error.ch				= [] ;		% per channel per time point error
+params.pred_error.ch_tot			= [] ;		% overall per channel error
+params.pred_error.all				= [] ;		% all channel per time point error
+params.pred_error.all_tot			= 100 ;		% total error (all channel, all time)
+
+
+
+%%%% --- CholeskyInverse --- ensure param invariants
+params.invSigma_eps				= CholeskyInverse( params.Sigma_eps, eye(D)) ;
+params.invSigma_z				= CholeskyInverse( params.Sigma_z, eye(D)) ;
+
+it_cnt						= 0 ;
+hf1						= figure ;
+if exist( 'params_true', 'var')
+    hf2						= figure ;
+end
+clear variational stp_estimate u_estimate vartheta H_estimate rel_change
+
+% keep track of relative error when using simuluations
+rel_err						= [] ;
+% keep track of relative changes per estimation iteration
+rel_change					= [] ;
+
+data.tictoc.( mfilename).log			= datestr( now, 31) ;
+
+% -- save the work so far --
+save( fullfile( env.tmp_path, 'temp.mat')) ;
+
+
+%%%% do parameter optimization -----------------------------------------------------------------------------------------
+while(1)
+    
+    %%%% loop iteration counter 
+    it_cnt					= it_cnt + 1 ;
+    params.it_cnt				= it_cnt ;
+    
+    data.tictoc.( mfilename).iteration(it_cnt).log	= datestr( now, 31) ;
+    
+    e
+    %%%% --- ssmVariationalDensity --- Variational E-Step --------------------------------------------------------------
+    data.tictoc.( 'ssmVariationalDensity').begin = datestr( now, 31) ;
+    variational_updated				= ssmVariationalDensity( params, data) ;
+    data.tictoc.( 'ssmVariationalDensity').end	= datestr( now, 31) ;
+% $$$     params.logo.( variational_updated.logo.name) = variational_updated.logo ;
+    
+    if exist( 'variational', 'var')
+	rel_change{it_cnt}.alpha		= norm( variational_updated.alpha(:) - variational.alpha(:)) / norm( variational.alpha(:)) ;
+	rel_change{it_cnt}.q_x			= norm( variational_updated.q_x(:) - variational.q_x(:)) / norm( variational.q_x(:)) ;
+	rel_change{it_cnt}.Sigma_qz		= norm( variational_updated.Sigma_qz (:) - variational.Sigma_qz (:)) / norm( variational.Sigma_qz (:)) ;
+	rel_change{it_cnt}.mu_qz		= norm( variational_updated.mu_qz  (:) - variational.mu_qz  (:)) / norm( variational.mu_qz (:)) ;
+
+	figure( hf1) ;
+	subplot( 3,3,1) ; hold all ; plot( it_cnt, rel_change{ it_cnt}.q_x) ;  
+	title( 'variational rel-change q_x') ;     
+	subplot( 3,3,2) ; hold all ; plot( it_cnt, rel_change{ it_cnt}.mu_qz) ;        
+	title( 'variational rel-change \mu_{q_z}') ;     
+	subplot( 3,3,3) ; hold all ; plot( it_cnt, rel_change{ it_cnt}.Sigma_qz) ;        
+	title( 'variational rel-change \Sigma_{q_z}') ;     
+    end
+    variational					= variational_updated ;
+    
+    % -- save the work so far --
+    save( fullfile( env.tmp_path, 'temp.mat')) ;
+    
+    
+    
+    %%%% --- ssmEstimateStateTransitionParameters --- Estimate the state-transition parameters (STP) -------------------
+    data.tictoc.( 'ssmEstimateStateTransitionParameters').begin	= datestr( now, 31) ;
+    [ stp_estimate]				= ssmEstimateStateTransitionParameters( data, params, variational) ;
+    data.tictoc.( 'ssmEstimateStateTransitionParameters').end	= datestr( now, 31) ;
+% $$$     params.logo.( stp_estimate.logo.name)	= stp_estimate.logo ;    
+    
+% $$$     display([ 'relative change in w =', num2str( stp_estimate.rel_change)]) ;
+    fprintf([ '\nrelative change in w = %s'], num2str( stp_estimate.rel_change)) ;
+
+    % plot updates
+    figure( hf1) ;
+    rel_change{it_cnt}.W			= norm(stp_estimate.W(:) - params.W(:))/norm(params.W(:)) ;
+    rel_change{it_cnt}.omega			= norm(stp_estimate.omega(:) - params.omega(:))/norm(params.omega(:)) ;
+    subplot( 3,3,4) ; hold all ; plot( it_cnt, rel_change{ it_cnt}.W, 'b*') ;
+    subplot( 3,3,4) ; hold all ; plot( it_cnt, rel_change{ it_cnt}.omega, 'k.') ;        
+    title( 'Rel. change in W and \omega') ;
+    % update params
+    params.W					= stp_estimate.W ;
+    params.omega				= stp_estimate.omega ;
+
+    % plot error
+    if exist( 'params_true', 'var')
+
+	figure( hf2) ;
+	rel_err{it_cnt}.W			= norm(params_true.W(:) - params.W(:))/norm(params_true.W(:)) ;
+	rel_err{it_cnt}.omega			= norm(params_true.omega(:) - params.omega(:))/norm(params_true.omega(:)) ;
+	subplot( 2,2,1) ; hold all ; plot( it_cnt, rel_err{ it_cnt}.W, 'b*') ;
+	subplot( 2,2,1) ; hold all ; plot( it_cnt, rel_err{ it_cnt}.omega, 'k.') ;        
+	title( 'Rel. error in W and \omega') ;
+    end
+
+    % -- save the work so far --
+    save( fullfile( env.tmp_path, 'temp.mat')) ;
+    
+    
+    
+    %%%% --- ssmEstimateHiddenStimulus --- Estimate hidden stimulus ----------------------------------------------------
+    data.tictoc.( 'ssmEstimateHiddenStimulus').begin	= datestr( now, 31) ;
+    [ u_estimate]				= ssmEstimateHiddenStimulus( data, params, variational) ;
+    data.tictoc.( 'ssmEstimateHiddenStimulus').end	= datestr( now, 31) ;
+% $$$     params.logo.( u_estimate.logo.name)		= u_estimate.logo ;    
+    
+    rel_change{it_cnt}.error			= abs( params.pred_error.all_tot - u_estimate.err.all_tot) / ...
+	abs(u_estimate.err.all_tot+(u_estimate.err.all_tot==0)) ;
+% $$$     display ( ['relative change in pred error = ', num2str(rel_change{ it_cnt}.error)]) ;        
+    fprintf([ '\nrelative change in pred error = %s'], num2str( rel_change{ it_cnt}.error)) ;
+    params.u					= u_estimate.u ;
+    params.pred_error				= u_estimate.err ;
+
+    % plot updates
+    figure( hf1) ;
+    subplot( 3,3,5) ; hold all ; plot( it_cnt, rel_change{ it_cnt}.error, 'ko')  ; 
+    subplot( 3,3,9) ; hold all ; plot( it_cnt, params.pred_error.all_tot, 'ko')  ;
+    title( 'Prediction error') ;       
+    
+    % -- save the work so far --
+    save( fullfile( env.tmp_path, 'temp.mat')) ;
+    
+    
+    
+    %%%% --- ssmEmissionParameters --- Estimate emission parameters ----------------------------------------------------
+    data.tictoc.( 'ssmEmissionParameters').begin = datestr( now, 31) ;
+    [ vartheta]					= ssmEmissionParameters( data, params, variational) ;
+    data.tictoc.( 'ssmEmissionParameters').end	= datestr( now, 31) ;
+% $$$     params.logo.( vartheta.logo.name)		= vartheta.logo ;    
+    
+% $$$     display([ 'relative change in emmision = ',num2str( mean( vartheta.rel_change_mu))]) ; 
+    fprintf([ '\nrelative change in emmision = %s'], num2str( mean( vartheta.rel_change_mu))) ;
+
+    % plot updates
+    figure( hf1) ;
+    rel_change{ it_cnt}.mu_z			= norm( vartheta.mu_z(:) - params.mu_z(:)) / norm(params.mu_z(:)) ;
+    rel_change{ it_cnt}.Sigma_z			= norm( vartheta.Sigma_z(:) - params.Sigma_z(:)) / norm(params.Sigma_z(:)) ;
+    rel_change{ it_cnt}.invSigma_z		= norm( vartheta.invSigma_z(:) - params.invSigma_z(:)) / norm(params.invSigma_z(:)) ;
+    subplot( 3,3,6) ; hold all ; plot( it_cnt, rel_change{ it_cnt}.mu_z, 'b*') ;
+    subplot( 3,3,6) ; hold all ; plot( it_cnt, rel_change{ it_cnt}.Sigma_z , 'k.') ;        
+    subplot( 3,3,6) ; hold all ; plot( it_cnt, rel_change{ it_cnt}.invSigma_z , 'ro') ;        
+    title( 'Rel. change in \vartheta') ;
+    % update params
+    params.mu_z					= vartheta.mu_z ;
+    params.Sigma_z				= vartheta.Sigma_z    ;     
+    params.invSigma_z				= vartheta.invSigma_z ;
+
+    % plot error
+    if exist( 'params_true', 'var')
+	figure( hf2) ;
+	rel_err{ it_cnt}.mu_z			= norm(params_true.mu_z(:) - params.mu_z(:)) / norm(params_true.mu_z(:)) ;
+	rel_err{ it_cnt}.Sigma_z		= norm(params_true.Sigma_z(:) - params.Sigma_z(:)) / norm(params_true.Sigma_z(:)) ;
+	rel_err{it_cnt}.invSigma_z		= norm(params_true.invSigma_z(:) - params.invSigma_z(:)) / norm(params_true.invSigma_z(:)) ;
+	subplot( 2,2,2) ; hold all ; plot( it_cnt, rel_err{ it_cnt}.mu_z, 'b*') ;
+	subplot( 2,2,2) ; hold all ; plot( it_cnt, rel_err{ it_cnt}.Sigma_z, 'k.') ;        
+	subplot( 2,2,2) ; hold all ; plot( it_cnt, rel_err{ it_cnt}.invSigma_z, 'ro') ;        
+	title( 'Rel. error in \vartheta') ;
+    end
+    
+    % -- save the work so far --
+    save( fullfile( env.tmp_path, 'temp.mat')) ;
+    
+    
+    
+    %%%% --- ssmHemodynamicParameters --- Estimate hemodynamic parameters ----------------------------------------------
+    data.tictoc.( 'ssmHemodynamicParameters').begin	= datestr( now, 31) ;
+    [ H_estimate]				= ssmHemodynamicParameters( data, params, variational) ;
+    data.tictoc.( 'ssmHemodynamicParameters').end	= datestr( now, 31) ;
+% $$$     params.logo.( H_estimate.logo.name)		= H_estimate.logo ;
+    
+    %update params
+    params.H					= H_estimate.H ;
+% $$$     display([ 'relative change in H = ',num2str( H_estimate.rel_change)]) ; 
+    fprintf([ '\nrelative change in H = %s'], num2str( H_estimate.rel_change)) ;
+    rel_change{ it_cnt}.H			= H_estimate.rel_change ;
+
+    % plot update
+    figure( hf1) ;
+    subplot( 3,3,7) ; hold all ; plot( it_cnt, rel_change{ it_cnt}.H , 'ro') ;        
+    title( 'Rel. change in H') ;
+
+    % plot error
+    if exist( 'params_true', 'var')
+	figure( hf2) ;
+	rel_err{ it_cnt}.H			= norm( params_true.H(:) - params.H(:)) / norm( params_true.H(:)) ;
+	subplot( 2,2,3) ; hold all ; plot( it_cnt, rel_err{ it_cnt}.H, 'ro') ;        
+	title( 'Rel. error in H and \Sigma_\epsilon') ;
+    end
+    
+    % -- save the work so far --
+    save( fullfile( env.tmp_path, 'temp.mat')) ;
+    
+    
+
+    %%%% --- ssmEstimateNoiseParameter --- Update noise model ----------------------------------------------------------
+    data.tictoc.( 'ssmEstimateNoiseParameter').begin	= datestr( now, 31) ;
+    [ noise]					= ssmEstimateNoiseParameter( data, params, variational) ;
+    data.tictoc.( 'ssmEstimateNoiseParameter').end	= datestr( now, 31) ;
+% $$$     params.logo.( noise.logo.name)		= noise.logo ;
+    
+    % plot update
+    rel_change{ it_cnt}.Sigma_eps		= noise.rel_change.Sigma_eps  ;
+    rel_change{ it_cnt}.invSigma_eps		= noise.rel_change.invSigma_eps ;
+% $$$     display([ 'relative change in noise = ', num2str(rel_change{it_cnt}.Sigma_eps)]) ; 
+    fprintf([ '\nrelative change in noise = %s'], num2str( rel_change{it_cnt}.Sigma_eps)) ;
+
+    figure( hf1) ;
+    subplot( 3,3,8) ; hold all ; plot( it_cnt, rel_change{ it_cnt}.Sigma_eps , 'k.') ;  
+    subplot( 3,3,8) ; hold all ; plot( it_cnt, rel_change{ it_cnt}.invSigma_eps , 'b*') ;  
+    title( 'Rel. change in \Sigma_\epsilon and inverse') ;
+    % update params
+    params.Sigma_eps				= noise.Sigma_eps ;
+    params.invSigma_eps				= noise.invSigma_eps ;
+
+    % plot error
+    if exist( 'params_true', 'var')
+	figure( hf2) ;
+	rel_err{ it_cnt}.Sigma_eps		= norm( params_true.Sigma_eps(:) - params.Sigma_eps(:)) / norm(params_true.Sigma_eps(:)) ;
+	rel_err{ it_cnt}.invSigma_eps		= norm( params_true.invSigma_eps(:) - params.invSigma_eps(:)) / norm(params_true.invSigma_eps(:)) ;
+	subplot( 2,2,3) ; hold all ; plot( it_cnt, rel_err{ it_cnt}.Sigma_eps , 'k.') ;  
+	subplot( 2,2,3) ; hold all ; plot( it_cnt, rel_err{ it_cnt}.invSigma_eps , 'b*') ;  
+	title( 'Rel. error in H and \Sigma_\epsilon') ;
+    end
+    
+    % -- save the work so far --
+    save( fullfile( env.tmp_path, 'temp.mat')) ;
+    
+    
+    % Copy the hyper-parameter values into params structure
+    params.K					= K ;
+    params.lambda_w				= lambda_w ;
+    
+    params_opt					= params  ;
+    
+    % evaluate model fit        
+    if rel_change{ it_cnt}.error < tol || it_cnt > 5
+	break
+    end
+    
+end %while(1)
+
+% $$$ end
+
+%%%% returning tictoc structure...
+data.tictoc.( mfilename).end			= datestr( now, 31) ;
+params_opt.tictoc				= data.tictoc ;
